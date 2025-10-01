@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     const { movies } = parsed.data;
     await writeMovies(movies);
     return NextResponse.json({ movies });
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: 'Failed to update list' }, { status: 500 });
   }
 }

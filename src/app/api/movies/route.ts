@@ -28,7 +28,7 @@ export async function POST(request: Request) {
       updated = await addMovies(movies);
     }
     return NextResponse.json({ movies: updated });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: 'Failed to update movies' }, { status: 500 });
   }
 }

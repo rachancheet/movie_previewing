@@ -9,7 +9,14 @@ const PIPED_INSTANCES = [
   'https://piped.privacydev.net',
 ];
 
-function extractVideoIdFromItem(item: any): string | null {
+type PipedItem = {
+  type?: string;
+  url?: string;
+  id?: string;
+  title?: string;
+};
+
+function extractVideoIdFromItem(item: PipedItem): string | null {
   // Common shapes:
   // - { type: 'video', url: '/watch?v=ID', ... }
   // - { type: 'stream', url: '/watch?v=ID', ... }
@@ -33,8 +40,12 @@ async function searchOnInstance(instance: string, query: string): Promise<string
     url.searchParams.set('hl', 'en');
     const res = await fetch(url, { signal: controller.signal, next: { revalidate: 60 } });
     if (!res.ok) return null;
-    const json = await res.json();
-    const items: any[] = Array.isArray(json) ? json : Array.isArray((json as any)?.items) ? (json as any).items : [];
+    const json: unknown = await res.json();
+    const items: PipedItem[] = Array.isArray(json)
+      ? (json as PipedItem[])
+      : Array.isArray((json as { items?: unknown })?.items)
+      ? ((json as { items?: unknown }).items as PipedItem[])
+      : [];
     if (!items.length) return null;
 
     // Prefer items with 'trailer' in the title
@@ -71,12 +82,12 @@ async function searchYouTubeVideoId(query: string): Promise<string | null> {
   for (const q of variants) {
     try {
       const result = await yts(q);
-      const videos: any[] = Array.isArray((result as any)?.videos) ? (result as any).videos : [];
+      const videos = Array.isArray(result?.videos) ? result.videos : [];
       if (!videos.length) continue;
       const lowered = (s: string) => s.toLowerCase();
-      const prioritized = videos.filter((v) => typeof v?.title === 'string' && lowered(v.title).includes('trailer'));
-      const pick = (prioritized[0] ?? videos[0]) as any;
-      const id = typeof pick?.videoId === 'string' ? pick.videoId : typeof pick?.videoId === 'number' ? String(pick.videoId) : null;
+      const prioritized = videos.filter((v) => typeof v?.title === 'string' && lowered(v.title!).includes('trailer'));
+      const pick = prioritized[0] ?? videos[0];
+      const id = typeof pick?.videoId === 'string' ? pick.videoId : null;
       if (id) return id;
     } catch {
       // ignore and continue

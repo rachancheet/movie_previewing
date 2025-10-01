@@ -30,9 +30,10 @@ export default function Home() {
       if (!res.ok) throw new Error('Trailer not found');
       const data: TrailerResponse = await res.json();
       setEmbedUrl(data.embedUrl);
-    } catch (e: any) {
+    } catch (e: unknown) {
       setEmbedUrl(null);
-      setError(e?.message ?? 'Failed to load trailer');
+      const msg = e instanceof Error ? e.message : 'Failed to load trailer';
+      setError(msg);
     } finally {
       setLoading(false);
     }
