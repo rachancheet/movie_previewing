@@ -1,95 +1,79 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+import { useCallback, useEffect, useState } from 'react';
+
+type TrailerResponse = { videoId: string; embedUrl: string };
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [movies, setMovies] = useState<string[]>([]);
+  const [current, setCurrent] = useState<string | null>(null);
+  const [embedUrl, setEmbedUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+  const pickRandom = useCallback((list: string[]) => {
+    if (!list.length) return null;
+    return list[Math.floor(Math.random() * list.length)] ?? null;
+  }, []);
+
+  const loadMovies = useCallback(async () => {
+    const res = await fetch('/api/movies', { cache: 'no-store' });
+    const data: { movies: string[] } = await res.json();
+    setMovies(data.movies ?? []);
+    return data.movies ?? [];
+  }, []);
+
+  const fetchTrailer = useCallback(async (title: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/trailer?q=${encodeURIComponent(title)}`, { cache: 'no-store' });
+      if (!res.ok) throw new Error('Trailer not found');
+      const data: TrailerResponse = await res.json();
+      setEmbedUrl(data.embedUrl);
+    } catch (e: any) {
+      setEmbedUrl(null);
+      setError(e?.message ?? 'Failed to load trailer');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const nextRandom = useCallback(async () => {
+    const list = movies.length ? movies : await loadMovies();
+    const title = pickRandom(list);
+    setCurrent(title);
+    if (title) await fetchTrailer(title);
+  }, [movies, loadMovies, pickRandom, fetchTrailer]);
+
+  useEffect(() => {
+    (async () => {
+      const list = await loadMovies();
+      const title = pickRandom(list);
+      setCurrent(title);
+      if (title) await fetchTrailer(title);
+    })();
+  }, [loadMovies, pickRandom, fetchTrailer]);
+
+  return (
+    <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: 24 }}>
+      <h1 style={{ fontSize: 28, fontWeight: 700 }}>Random Movie Trailer</h1>
+      {current && <div style={{ fontSize: 18 }}>🎬 {current}</div>}
+      <div style={{ width: '100%', maxWidth: 960, aspectRatio: '16 / 9', background: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 8, overflow: 'hidden' }}>
+        {embedUrl ? (
+          <iframe
+            key={embedUrl}
+            src={embedUrl}
+            style={{ width: '100%', height: '100%', border: 0 }}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
           />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        ) : (
+          <div style={{ color: '#eee', padding: 16 }}>{loading ? 'Loading…' : error ? error : 'No trailer yet'}</div>
+        )}
+      </div>
+      <button onClick={nextRandom} disabled={loading} style={{ padding: '10px 16px', borderRadius: 6, border: '1px solid #444', background: '#222', color: '#fff', cursor: 'pointer' }}>
+        {loading ? 'Finding…' : 'Next'}
+      </button>
+    </main>
   );
 }
