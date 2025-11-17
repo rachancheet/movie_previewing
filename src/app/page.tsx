@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 type TrailerResponse = { videoId: string; embedUrl: string };
 
@@ -9,11 +9,14 @@ export default function Home() {
   const [embedUrl, setEmbedUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const trailerCache = useRef<Map<string, TrailerResponse>>(new Map());
 
   const pickRandom = useCallback((list: string[]) => {
     if (!list.length) return null;
     return list[Math.floor(Math.random() * list.length)] ?? null;
   }, []);
+
+  
 
   const loadMovies = useCallback(async () => {
     const res = await fetch('/api/movies', { cache: 'no-store' });
@@ -23,12 +26,22 @@ export default function Home() {
   }, []);
 
   const fetchTrailer = useCallback(async (title: string) => {
+    // Check cache first
+    const cached = trailerCache.current.get(title);
+    if (cached) {
+      setEmbedUrl(cached.embedUrl);
+      setError(null);
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
       const res = await fetch(`/api/trailer?q=${encodeURIComponent(title)}`, { cache: 'no-store' });
       if (!res.ok) throw new Error('Trailer not found');
       const data: TrailerResponse = await res.json();
+      // Store in cache
+      trailerCache.current.set(title, data);
       setEmbedUrl(data.embedUrl);
     } catch (e: unknown) {
       setEmbedUrl(null);
@@ -55,6 +68,19 @@ export default function Home() {
     })();
   }, [loadMovies, pickRandom, fetchTrailer]);
 
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        nextRandom();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [nextRandom]);
+
   return (
     <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: 24 }}>
       <h1 style={{ fontSize: 28, fontWeight: 700 }}>Random Movie Trailer</h1>
@@ -72,7 +98,7 @@ export default function Home() {
           <div style={{ color: '#eee', padding: 16 }}>{loading ? 'Loading…' : error ? error : 'No trailer yet'}</div>
         )}
       </div>
-      <button onClick={nextRandom} disabled={loading} style={{ padding: '10px 16px', borderRadius: 6, border: '1px solid #444', background: '#222', color: '#fff', cursor: 'pointer' }}>
+      <button onClick={nextRandom} style={{ padding: '10px 16px', borderRadius: 6, border: '1px solid #444', background: '#222', color: '#fff', cursor: 'pointer' }}>
         {loading ? 'Finding…' : 'Next'}
       </button>
     </main>
