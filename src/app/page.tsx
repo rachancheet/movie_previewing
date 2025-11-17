@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 type TrailerResponse = { videoId: string; embedUrl: string };
 
@@ -9,7 +9,6 @@ export default function Home() {
   const [embedUrl, setEmbedUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const trailerCache = useRef<Map<string, TrailerResponse>>(new Map());
 
   const pickRandom = useCallback((list: string[]) => {
     if (!list.length) return null;
@@ -26,22 +25,12 @@ export default function Home() {
   }, []);
 
   const fetchTrailer = useCallback(async (title: string) => {
-    // Check cache first
-    const cached = trailerCache.current.get(title);
-    if (cached) {
-      setEmbedUrl(cached.embedUrl);
-      setError(null);
-      return;
-    }
-
     setLoading(true);
     setError(null);
     try {
       const res = await fetch(`/api/trailer?q=${encodeURIComponent(title)}`, { cache: 'no-store' });
       if (!res.ok) throw new Error('Trailer not found');
       const data: TrailerResponse = await res.json();
-      // Store in cache
-      trailerCache.current.set(title, data);
       setEmbedUrl(data.embedUrl);
     } catch (e: unknown) {
       setEmbedUrl(null);

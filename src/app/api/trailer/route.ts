@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import yts from 'yt-search';
 
+// Cache for trailer responses
+const trailerCache = new Map<string, { videoId: string; embedUrl: string }>();
+
 // Try multiple Piped instances and query variants for robustness
 const PIPED_INSTANCES = [
   'https://piped.video',
@@ -108,9 +111,22 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const q = searchParams.get('q');
   if (!q) return NextResponse.json({ error: 'Missing q' }, { status: 400 });
+  
+  // Check cache first
+  const cacheKey = q.toLowerCase().trim();
+  const cached = trailerCache.get(cacheKey);
+  if (cached) {
+    return NextResponse.json(cached);
+  }
+  
   const videoId = await searchYouTubeVideoId(`${q} trailer`);
   if (!videoId) return NextResponse.json({ error: 'No trailer found' }, { status: 404 });
-  return NextResponse.json({ videoId, embedUrl: `https://www.youtube.com/embed/${videoId}` });
+  
+  const response = { videoId, embedUrl: `https://www.youtube.com/embed/${videoId}` };
+  // Store in cache
+  trailerCache.set(cacheKey, response);
+  
+  return NextResponse.json(response);
 }
 
 
