@@ -7,7 +7,16 @@ const Body = z.object({
 });
 
 export async function POST(request: Request) {
-  try {
+  try {    
+    if (!request.headers.get('content-type')?.includes('application/json')) {
+        return NextResponse.json({ error: 'JSON only' }, { status: 415 });
+    }
+    const key = request.headers.get("authorization");
+    if (key !== `Bearer ${process.env.API_KEY}`) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+
     const payload = await request.json();
     const parsed = Body.safeParse(payload);
     if (!parsed.success) {
