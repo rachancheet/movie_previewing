@@ -1,24 +1,17 @@
 {
   "movies": [
     {
-      "name": "Citizen Kane",
+      "name": "Inception",
       "trailer": {
-        "videoId": "8dxh3lwdOFw",
-        "embedUrl": "https://www.youtube.com/embed/8dxh3lwdOFw"
+        "videoId": "YoHD9XEInc0",
+        "embedUrl": "https://www.youtube.com/embed/YoHD9XEInc0"
       }
     },
     {
-      "name": "The Godfather",
+      "name": "Interstellar",
       "trailer": {
-        "videoId": "UaVTIH8mujA",
-        "embedUrl": "https://www.youtube.com/embed/UaVTIH8mujA"
-      }
-    },
-    {
-      "name": "The Godfather: Part II",
-      "trailer": {
-        "videoId": "9O1Iy9od7-A",
-        "embedUrl": "https://www.youtube.com/embed/9O1Iy9od7-A"
+        "videoId": "zSWdZVtXT7E",
+        "embedUrl": "https://www.youtube.com/embed/zSWdZVtXT7E"
       }
     },
     {
@@ -29,45 +22,10 @@
       }
     },
     {
-      "name": "12 Angry Men",
+      "name": "Oppenheimer",
       "trailer": {
-        "videoId": "TEN-2uTi2c0",
-        "embedUrl": "https://www.youtube.com/embed/TEN-2uTi2c0"
-      }
-    },
-    {
-      "name": "Schindlers List",
-      "trailer": {
-        "videoId": "mxphAlJID9U",
-        "embedUrl": "https://www.youtube.com/embed/mxphAlJID9U"
-      }
-    },
-    {
-      "name": "The Lord of the Rings: The Return of the King",
-      "trailer": {
-        "videoId": "r5X-hFf6Bwo",
-        "embedUrl": "https://www.youtube.com/embed/r5X-hFf6Bwo"
-      }
-    },
-    {
-      "name": "Pulp Fiction",
-      "trailer": {
-        "videoId": "s7EdQ4FqbhY",
-        "embedUrl": "https://www.youtube.com/embed/s7EdQ4FqbhY"
-      }
-    },
-    {
-      "name": "The Good the Bad and the Ugly",
-      "trailer": {
-        "videoId": "WCN5JJY_wiA",
-        "embedUrl": "https://www.youtube.com/embed/WCN5JJY_wiA"
-      }
-    },
-    {
-      "name": "The Lord of the Rings: The Fellowship of the Ring",
-      "trailer": {
-        "videoId": "V75dMMIW2B4",
-        "embedUrl": "https://www.youtube.com/embed/V75dMMIW2B4"
+        "videoId": "bK6ldnjE3Y0",
+        "embedUrl": "https://www.youtube.com/embed/bK6ldnjE3Y0"
       }
     }
   ]

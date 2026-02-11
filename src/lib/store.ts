@@ -4,6 +4,9 @@ import yts from 'yt-search';
 
 const DATA_FILE = path.join(process.cwd(), 'src', 'data', 'movies.json');
 
+const FETCH_DELAY_MS = 1000; // pause between YouTube searches to avoid rate-limits
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 // Shape of what we persist
 export type TrailerInfo = { videoId: string; embedUrl: string };
 export type MovieEntry = { name: string; trailer: TrailerInfo | null };
@@ -82,7 +85,8 @@ export async function getRandomTrailer(): Promise<MovieEntry | null> {
 /**
  * Replace the movie list.
  * - Movies already in the store keep their existing trailer (no re-fetch).
- * - New movies get their trailer fetched now.
+ * - New movies are saved immediately with trailer: null.
+ * - Trailer fetching for new movies happens in the background (fire-and-forget).
  * - Movies removed from the new list are dropped.
  */
 export async function updateMovieList(newNames: string[]): Promise<MovieEntry[]> {
@@ -96,22 +100,62 @@ export async function updateMovieList(newNames: string[]): Promise<MovieEntry[]>
     existing.set(entry.name.toLowerCase(), entry.trailer);
   }
 
-  // Build new list, reusing trailers where possible
+  // Build new list, reusing trailers where possible; new movies get null
   const entries: MovieEntry[] = [];
+  const needFetch: string[] = [];
 
   for (const name of cleaned) {
     const key = name.toLowerCase();
     if (existing.has(key) && existing.get(key) !== null) {
-      // already have a trailer – reuse it
       entries.push({ name, trailer: existing.get(key)! });
     } else {
-      // new movie – fetch trailer
-      const trailer = await fetchTrailerForMovie(name);
-      entries.push({ name, trailer });
+      entries.push({ name, trailer: null });
+      needFetch.push(name);
     }
   }
 
+  // Save immediately so the response is instant
   const updated: StoreData = { movies: entries };
   await writeStore(updated);
+
+  // Kick off background trailer fetching (fire-and-forget)
+  if (needFetch.length > 0) {
+    fetchTrailersInBackground(needFetch);
+  }
+
   return entries;
+}
+
+/**
+ * Fetch trailers for the given movie names in the background.
+ * After each successful fetch, patch the store on disk.
+ * Errors are silently swallowed – the frontend can retry later.
+ */
+function fetchTrailersInBackground(names: string[]): void {
+  // We intentionally do NOT await this – it runs detached
+  (async () => {
+    for (let i = 0; i < names.length; i++) {
+      const name = names[i];
+
+      // Throttle: wait before each fetch (skip the first one)
+      if (i > 0) await sleep(FETCH_DELAY_MS);
+
+      try {
+        const trailer = await fetchTrailerForMovie(name);
+        if (!trailer) continue;
+
+        // Read → patch → write (safe for sequential background work)
+        const store = await readStore();
+        const entry = store.movies.find(
+          (m) => m.name.toLowerCase() === name.toLowerCase(),
+        );
+        if (entry) {
+          entry.trailer = trailer;
+          await writeStore(store);
+        }
+      } catch {
+        // skip this movie, the user can refresh later
+      }
+    }
+  })();
 }

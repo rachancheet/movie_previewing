@@ -141,16 +141,7 @@ export default function Home() {
       <div style={styles.bgOrb1} />
       <div style={styles.bgOrb2} />
 
-      {/* ── Header ───────────────────────────────────────────────── */}
-      <header style={styles.header}>
-        <div style={styles.logoWrapper}>
-          <div style={styles.logoIcon}>▶</div>
-          <h1 style={styles.title}>Movie Previewer</h1>
-        </div>
-        <p style={styles.subtitle}>
-          Browse trailers · Click to watch · Press <kbd style={styles.kbd}>Enter</kbd> for a surprise
-        </p>
-      </header>
+
 
       {/* ── Content Grid ─────────────────────────────────────────── */}
       <div className="content-grid" style={styles.contentGrid}>
@@ -558,52 +549,7 @@ const styles: Record<string, React.CSSProperties> = {
     zIndex: 0,
   },
 
-  /* Header */
-  header: {
-    textAlign: "center" as const,
-    zIndex: 1,
-    animation: "fadeIn 0.6s ease-out",
-  },
 
-  logoWrapper: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 12,
-    marginBottom: 8,
-  },
-
-  logoIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: "var(--radius-md)",
-    background: "linear-gradient(135deg, var(--accent) 0%, #7928ca 100%)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: 16,
-    color: "#fff",
-    fontWeight: 700,
-  },
-
-  title: {
-    fontSize: 28,
-    fontWeight: 700,
-    letterSpacing: "-0.02em",
-    background: "linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-  },
-
-  subtitle: {
-    fontSize: 14,
-    color: "var(--text-secondary)",
-    display: "flex",
-    alignItems: "center",
-    gap: 6,
-    justifyContent: "center",
-    flexWrap: "wrap" as const,
-  },
 
   kbd: {
     display: "inline-flex",
