@@ -441,11 +441,7 @@ export default function Home() {
               Mark Watched
             </button>
           </div>
-          <div style={{ marginTop: 8, display: "flex", justifyContent: "center" }}>
-            <span className="hint-text" style={styles.hint}>
-              Press <kbd style={styles.kbd}>↵</kbd> to shuffle
-            </span>
-          </div>
+
         </div>
 
         {/* Right: Watch History sidebar */}
@@ -599,21 +595,7 @@ const styles: Record<string, React.CSSProperties> = {
 
 
 
-  kbd: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    minWidth: 22,
-    height: 20,
-    padding: "0 6px",
-    borderRadius: 4,
-    background: "var(--bg-elevated)",
-    border: "1px solid var(--border-default)",
-    fontSize: 11,
-    fontFamily: "var(--font-mono)",
-    color: "var(--text-secondary)",
-    lineHeight: 1,
-  },
+
 
   /* Content Grid */
   contentGrid: {
@@ -905,13 +887,7 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: "wait",
   },
 
-  hint: {
-    fontSize: 13,
-    color: "var(--text-tertiary)",
-    display: "flex",
-    alignItems: "center",
-    gap: 4,
-  },
+
 
   /* ── Sidebar ───────────────────────────────────────── */
   sidebar: {
