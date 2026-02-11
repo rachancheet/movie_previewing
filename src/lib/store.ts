@@ -1,32 +1,117 @@
 import { promises as fs } from 'fs';
 import path from 'path';
+import yts from 'yt-search';
 
-const dataFilePath = path.join(process.cwd(), 'src', 'data', 'movies.json');
+const DATA_FILE = path.join(process.cwd(), 'src', 'data', 'movies.json');
 
-export async function readMovies(): Promise<string[]> {
-  const buf = await fs.readFile(dataFilePath, 'utf8');
-  const data = JSON.parse(buf);
-  if (!Array.isArray(data)) return [];
-  return data.filter((x) => typeof x === 'string');
+// Shape of what we persist
+export type TrailerInfo = { videoId: string; embedUrl: string };
+export type MovieEntry = { name: string; trailer: TrailerInfo | null };
+export type StoreData = { movies: MovieEntry[] };
+
+// ---------------------------------------------------------------------------
+// Read / Write helpers
+// ---------------------------------------------------------------------------
+
+async function readStore(): Promise<StoreData> {
+  try {
+    const raw = await fs.readFile(DATA_FILE, 'utf8');
+    const parsed = JSON.parse(raw);
+    if (parsed && Array.isArray(parsed.movies)) return parsed as StoreData;
+  } catch {
+    // file missing or corrupt – start fresh
+  }
+  return { movies: [] };
 }
 
-export async function writeMovies(movies: string[]): Promise<void> {
-  const unique = Array.from(new Set(movies.map((m) => m.trim()).filter(Boolean)));
-  const json = JSON.stringify(unique, null, 2) + '\n';
-  await fs.writeFile(dataFilePath, json, 'utf8');
+async function writeStore(data: StoreData): Promise<void> {
+  await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2) + '\n', 'utf8');
 }
 
-export async function addMovies(moviesToAdd: string[]): Promise<string[]> {
-  const current = await readMovies();
-  const merged = Array.from(new Set([...current, ...moviesToAdd]));
-  await writeMovies(merged);
-  return merged;
+// ---------------------------------------------------------------------------
+// YouTube search  (yt-search, no API key needed)
+// ---------------------------------------------------------------------------
+
+async function fetchTrailerForMovie(movieName: string): Promise<TrailerInfo | null> {
+  const queries = [
+    `${movieName} official trailer`,
+    `${movieName} trailer`,
+    `${movieName} movie trailer`,
+  ];
+
+  for (const q of queries) {
+    try {
+      const result = await yts(q);
+      const videos = Array.isArray(result?.videos) ? result.videos : [];
+      if (!videos.length) continue;
+
+      // prefer a video whose title contains "trailer"
+      const preferred = videos.find(
+        (v) => typeof v?.title === 'string' && v.title.toLowerCase().includes('trailer'),
+      );
+      const pick = preferred ?? videos[0];
+      const id = typeof pick?.videoId === 'string' ? pick.videoId : null;
+      if (id) {
+        return { videoId: id, embedUrl: `https://www.youtube.com/embed/${id}` };
+      }
+    } catch {
+      // try next query
+    }
+  }
+  return null;
 }
 
-export function getRandomMovie(movies: string[]): string | null {
-  if (!movies.length) return null;
-  const idx = Math.floor(Math.random() * movies.length);
-  return movies[idx] ?? null;
+// ---------------------------------------------------------------------------
+// Public API used by route handlers
+// ---------------------------------------------------------------------------
+
+/** Return all stored movies + trailers */
+export async function getMovies(): Promise<MovieEntry[]> {
+  const store = await readStore();
+  return store.movies;
 }
 
+/** Return a single random movie that has a trailer */
+export async function getRandomTrailer(): Promise<MovieEntry | null> {
+  const store = await readStore();
+  const withTrailer = store.movies.filter((m) => m.trailer !== null);
+  if (!withTrailer.length) return null;
+  return withTrailer[Math.floor(Math.random() * withTrailer.length)] ?? null;
+}
 
+/**
+ * Replace the movie list.
+ * - Movies already in the store keep their existing trailer (no re-fetch).
+ * - New movies get their trailer fetched now.
+ * - Movies removed from the new list are dropped.
+ */
+export async function updateMovieList(newNames: string[]): Promise<MovieEntry[]> {
+  const cleaned = Array.from(new Set(newNames.map((n) => n.trim()).filter(Boolean)));
+
+  const store = await readStore();
+
+  // Build a lookup of existing trailers keyed by lowercase name
+  const existing = new Map<string, TrailerInfo | null>();
+  for (const entry of store.movies) {
+    existing.set(entry.name.toLowerCase(), entry.trailer);
+  }
+
+  // Build new list, reusing trailers where possible
+  const entries: MovieEntry[] = [];
+
+  for (const name of cleaned) {
+    const key = name.toLowerCase();
+    if (existing.has(key) && existing.get(key) !== null) {
+      // already have a trailer – reuse it
+      entries.push({ name, trailer: existing.get(key)! });
+    } else {
+      // new movie – fetch trailer
+      const trailer = await fetchTrailerForMovie(name);
+      entries.push({ name, trailer });
+    }
+  }
+
+  const updated: StoreData = { movies: entries };
+  await writeStore(updated);
+  return entries;
+}
