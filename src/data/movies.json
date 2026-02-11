@@ -5,28 +5,24 @@
       "trailer": {
         "videoId": "YoHD9XEInc0",
         "embedUrl": "https://www.youtube.com/embed/YoHD9XEInc0"
-      }
+      },
+      "watched": true
     },
     {
       "name": "Interstellar",
       "trailer": {
         "videoId": "zSWdZVtXT7E",
         "embedUrl": "https://www.youtube.com/embed/zSWdZVtXT7E"
-      }
+      },
+      "watched": true
     },
     {
-      "name": "The Dark Knight",
+      "name": "Dune",
       "trailer": {
-        "videoId": "EXeTwQWrcwY",
-        "embedUrl": "https://www.youtube.com/embed/EXeTwQWrcwY"
-      }
-    },
-    {
-      "name": "Oppenheimer",
-      "trailer": {
-        "videoId": "bK6ldnjE3Y0",
-        "embedUrl": "https://www.youtube.com/embed/bK6ldnjE3Y0"
-      }
+        "videoId": "n9xhJrPXop4",
+        "embedUrl": "https://www.youtube.com/embed/n9xhJrPXop4"
+      },
+      "watched": false
     }
   ]
 }

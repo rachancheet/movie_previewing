@@ -9,7 +9,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // Shape of what we persist
 export type TrailerInfo = { videoId: string; embedUrl: string };
-export type MovieEntry = { name: string; trailer: TrailerInfo | null };
+export type MovieEntry = { name: string; trailer: TrailerInfo | null; watched?: boolean };
 export type StoreData = { movies: MovieEntry[] };
 
 // ---------------------------------------------------------------------------
@@ -71,20 +71,34 @@ async function fetchTrailerForMovie(movieName: string): Promise<TrailerInfo | nu
 /** Return all stored movies + trailers */
 export async function getMovies(): Promise<MovieEntry[]> {
   const store = await readStore();
-  return store.movies;
+  // Filter out watched movies from the returned list so they don't appear in UI
+  return store.movies.filter(m => !m.watched);
 }
 
-/** Return a single random movie that has a trailer */
+/** Return a single random movie that has a trailer and is not watched */
 export async function getRandomTrailer(): Promise<MovieEntry | null> {
   const store = await readStore();
-  const withTrailer = store.movies.filter((m) => m.trailer !== null);
-  if (!withTrailer.length) return null;
-  return withTrailer[Math.floor(Math.random() * withTrailer.length)] ?? null;
+  const validMovies = store.movies.filter((m) => m.trailer !== null && !m.watched);
+  if (!validMovies.length) return null;
+  return validMovies[Math.floor(Math.random() * validMovies.length)] ?? null;
+}
+
+/** Mark a movie as watched */
+export async function markMovieAsWatched(name: string): Promise<boolean> {
+  const store = await readStore();
+  const entry = store.movies.find(m => m.name.toLowerCase() === name.toLowerCase());
+
+  if (entry) {
+    entry.watched = true;
+    await writeStore(store);
+    return true;
+  }
+  return false;
 }
 
 /**
  * Replace the movie list.
- * - Movies already in the store keep their existing trailer (no re-fetch).
+ * - Movies already in the store keep their existing trailer and watched status.
  * - New movies are saved immediately with trailer: null.
  * - Trailer fetching for new movies happens in the background (fire-and-forget).
  * - Movies removed from the new list are dropped.
@@ -94,22 +108,30 @@ export async function updateMovieList(newNames: string[]): Promise<MovieEntry[]>
 
   const store = await readStore();
 
-  // Build a lookup of existing trailers keyed by lowercase name
-  const existing = new Map<string, TrailerInfo | null>();
+  // Build a lookup of existing entries keyed by lowercase name
+  const existing = new Map<string, MovieEntry>();
   for (const entry of store.movies) {
-    existing.set(entry.name.toLowerCase(), entry.trailer);
+    existing.set(entry.name.toLowerCase(), entry);
   }
 
-  // Build new list, reusing trailers where possible; new movies get null
+  // Build new list, reusing trailers and watched status where possible
   const entries: MovieEntry[] = [];
   const needFetch: string[] = [];
 
   for (const name of cleaned) {
     const key = name.toLowerCase();
-    if (existing.has(key) && existing.get(key) !== null) {
-      entries.push({ name, trailer: existing.get(key)! });
+    const prev = existing.get(key);
+
+    if (prev) {
+      // Preserve trailer and watched status
+      entries.push({
+        name,
+        trailer: prev.trailer,
+        watched: prev.watched
+      });
     } else {
-      entries.push({ name, trailer: null });
+      // New movie
+      entries.push({ name, trailer: null, watched: false });
       needFetch.push(name);
     }
   }
