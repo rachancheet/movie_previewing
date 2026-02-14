@@ -10,11 +10,7 @@ type MovieItem = {
   videoId: string | null;
 };
 
-type TrailerResponse = {
-  movie: string;
-  videoId: string;
-  embedUrl: string;
-};
+
 
 type WatchedMovie = {
   name: string;
@@ -39,6 +35,14 @@ export default function Home() {
   // Session watch history
   const [watchHistory, setWatchHistory] = useState<WatchedMovie[]>([]);
 
+  /* ── Watch history tracker ───────────────────────────────────────── */
+  const addToHistory = useCallback((name: string, url: string) => {
+    setWatchHistory((prev) => {
+      const filtered = prev.filter((h) => h.name !== name);
+      return [{ name, embedUrl: url, watchedAt: Date.now() }, ...filtered];
+    });
+  }, []);
+
   /* ── Fetch movies list ───────────────────────────────────────────── */
   const fetchMoviesList = useCallback(async () => {
     try {
@@ -57,19 +61,32 @@ export default function Home() {
   }, [fetchMoviesList]);
 
   /* ── Load random trailer ─────────────────────────────────────────── */
-  const loadRandomTrailer = useCallback(async () => {
+  /* ── Load random trailer ─────────────────────────────────────────── */
+  const loadRandomTrailer = useCallback(() => {
     setLoading(true);
     setError(null);
+
     try {
-      const res = await fetch("/api/trailer", { cache: "no-store" });
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.error || "No trailers available");
+      // Filter for movies with trailers, excluding current one if possible
+      const candidates = allMovies.filter(
+        (m) => m.hasTrailer && m.embedUrl && m.name !== currentMovie
+      );
+
+      // Fallback if no other movies are available
+      const pool =
+        candidates.length > 0
+          ? candidates
+          : allMovies.filter((m) => m.hasTrailer && m.embedUrl);
+
+      if (pool.length === 0) {
+        throw new Error("No trailers available");
       }
-      const data: TrailerResponse = await res.json();
-      setCurrentMovie(data.movie);
-      setEmbedUrl(data.embedUrl);
-      addToHistory(data.movie, data.embedUrl);
+
+      const randomMovie = pool[Math.floor(Math.random() * pool.length)];
+
+      setCurrentMovie(randomMovie.name);
+      setEmbedUrl(randomMovie.embedUrl);
+      addToHistory(randomMovie.name, randomMovie.embedUrl!);
     } catch (e: unknown) {
       setCurrentMovie(null);
       setEmbedUrl(null);
@@ -77,7 +94,7 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [allMovies, currentMovie, addToHistory]);
 
   /* ── Play specific movie ─────────────────────────────────────────── */
   const playMovie = useCallback(
@@ -118,13 +135,7 @@ export default function Home() {
     }
   }, [currentMovie, loadRandomTrailer]);
 
-  /* ── Watch history tracker ───────────────────────────────────────── */
-  const addToHistory = (name: string, url: string) => {
-    setWatchHistory((prev) => {
-      const filtered = prev.filter((h) => h.name !== name);
-      return [{ name, embedUrl: url, watchedAt: Date.now() }, ...filtered];
-    });
-  };
+
 
   /* ── Keyboard shortcut ───────────────────────────────────────────── */
   useEffect(() => {
