@@ -49,7 +49,7 @@ export default function Home() {
       const res = await fetch("/api/movies", { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
-        setAllMovies(data.movies ?? []);
+        setAllMovies((data.movies ?? []).reverse());
       }
     } catch {
       // silently fail
