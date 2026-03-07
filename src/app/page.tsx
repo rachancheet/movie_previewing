@@ -185,7 +185,7 @@ export default function Home() {
               id="movie-dropdown-toggle"
               onClick={() => {
                 setDropdownOpen(!dropdownOpen);
-                fetchMoviesList();
+               // fetchMoviesList();
               }}
               style={{
                 ...styles.dropdownButton,
