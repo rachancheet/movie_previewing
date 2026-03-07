@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     }
 
     // This will reuse existing trailers and only fetch new ones
-    const movies = await updateMovieList(parsed.data.movies);
+    const movies = await updateMovieList(parsed.data.movies.reverse());
 
     return NextResponse.json({
       movies: movies.map((m) => m.name),

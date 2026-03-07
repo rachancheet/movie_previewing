@@ -23,6 +23,142 @@
         "embedUrl": "https://www.youtube.com/embed/n9xhJrPXop4"
       },
       "watched": false
+    },
+    {
+      "name": "The Dark Knight",
+      "trailer": {
+        "videoId": "EXeTwQWrcwY",
+        "embedUrl": "https://www.youtube.com/embed/EXeTwQWrcwY"
+      },
+      "watched": false
+    },
+    {
+      "name": "The Matrix",
+      "trailer": {
+        "videoId": "vKQi3bBA1y8",
+        "embedUrl": "https://www.youtube.com/embed/vKQi3bBA1y8"
+      },
+      "watched": false
+    },
+    {
+      "name": "Avengers: Endgame",
+      "trailer": {
+        "videoId": "TcMBFSGVi1c",
+        "embedUrl": "https://www.youtube.com/embed/TcMBFSGVi1c"
+      },
+      "watched": false
+    },
+    {
+      "name": "Spider-Man: No Way Home",
+      "trailer": {
+        "videoId": "JfVOs4VSpmA",
+        "embedUrl": "https://www.youtube.com/embed/JfVOs4VSpmA"
+      },
+      "watched": false
+    },
+    {
+      "name": "Oppenheimer",
+      "trailer": {
+        "videoId": "bK6ldnjE3Y0",
+        "embedUrl": "https://www.youtube.com/embed/bK6ldnjE3Y0"
+      },
+      "watched": false
+    },
+    {
+      "name": "Barbie",
+      "trailer": {
+        "videoId": "pBk4NYhWNMM",
+        "embedUrl": "https://www.youtube.com/embed/pBk4NYhWNMM"
+      },
+      "watched": false
+    },
+    {
+      "name": "Joker",
+      "trailer": {
+        "videoId": "zAGVQLHvwOY",
+        "embedUrl": "https://www.youtube.com/embed/zAGVQLHvwOY"
+      },
+      "watched": false
+    },
+    {
+      "name": "The Batman",
+      "trailer": {
+        "videoId": "mqqft2x_Aa4",
+        "embedUrl": "https://www.youtube.com/embed/mqqft2x_Aa4"
+      },
+      "watched": false
+    },
+    {
+      "name": "Gladiator",
+      "trailer": {
+        "videoId": "owK1qxDselE",
+        "embedUrl": "https://www.youtube.com/embed/owK1qxDselE"
+      },
+      "watched": false
+    },
+    {
+      "name": "Titanic",
+      "trailer": {
+        "videoId": "CHekzSiZcw4",
+        "embedUrl": "https://www.youtube.com/embed/CHekzSiZcw4"
+      },
+      "watched": false
+    },
+    {
+      "name": "Jurassic Park",
+      "trailer": {
+        "videoId": "lc0UehYemQA",
+        "embedUrl": "https://www.youtube.com/embed/lc0UehYemQA"
+      },
+      "watched": false
+    },
+    {
+      "name": "Mad Max: Fury Road",
+      "trailer": {
+        "videoId": "hEJnMQG9ev8",
+        "embedUrl": "https://www.youtube.com/embed/hEJnMQG9ev8"
+      },
+      "watched": false
+    },
+    {
+      "name": "Avatar",
+      "trailer": {
+        "videoId": "5PSNL1qE6VY",
+        "embedUrl": "https://www.youtube.com/embed/5PSNL1qE6VY"
+      },
+      "watched": false
+    },
+    {
+      "name": "John Wick",
+      "trailer": {
+        "videoId": "C0VN07TioH0",
+        "embedUrl": "https://www.youtube.com/embed/C0VN07TioH0"
+      },
+      "watched": false
+    },
+    {
+      "name": "Guardians of the Galaxy",
+      "trailer": {
+        "videoId": "d96cjJhvlMA",
+        "embedUrl": "https://www.youtube.com/embed/d96cjJhvlMA"
+      },
+      "watched": false
+    },
+    {
+      "name": "Deadpool",
+      "trailer": {
+        "videoId": "ONHBaC-pfsk",
+        "embedUrl": "https://www.youtube.com/embed/ONHBaC-pfsk"
+      },
+      "watched": false
+    },
+    {
+      "name": "Blade Runner 2049",
+      "trailer": {
+        "videoId": "gCcx85zbxz4",
+        "embedUrl": "https://www.youtube.com/embed/gCcx85zbxz4"
+      },
+      "watched": false
     }
   ]
 }

@@ -49,7 +49,7 @@ export default function Home() {
       const res = await fetch("/api/movies", { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
-        setAllMovies((data.movies ?? []).reverse());
+        setAllMovies(data.movies ?? []);
       }
     } catch {
       // silently fail
@@ -169,12 +169,6 @@ export default function Home() {
   /* ── Render ──────────────────────────────────────────────────────── */
   return (
     <main className="main-wrapper" style={styles.main}>
-      {/* Background gradient orbs */}
-      <div style={styles.bgOrb1} />
-      <div style={styles.bgOrb2} />
-
-
-
       {/* ── Content Grid ─────────────────────────────────────────── */}
       <div className="content-grid" style={styles.contentGrid}>
         {/* Left: Player + Controls */}
@@ -185,7 +179,7 @@ export default function Home() {
               id="movie-dropdown-toggle"
               onClick={() => {
                 setDropdownOpen(!dropdownOpen);
-               // fetchMoviesList();
+                // fetchMoviesList();
               }}
               style={{
                 ...styles.dropdownButton,
@@ -553,12 +547,7 @@ export default function Home() {
         </aside>
       </div>
 
-      {/* Footer */}
-      <footer className="footer-bar" style={styles.footer}>
-        <span style={styles.footerText}>
-          Built with Next.js · {allMovies.length} movies loaded
-        </span>
-      </footer>
+      {/* Footer removed */}
     </main>
   );
 }
@@ -578,30 +567,6 @@ const styles: Record<string, React.CSSProperties> = {
   main: {
     /* layout props (padding, gap, etc.) are in .main-wrapper CSS class for responsive overrides */
     overflow: "hidden",
-  },
-
-  bgOrb1: {
-    position: "fixed",
-    top: -200,
-    right: -200,
-    width: 600,
-    height: 600,
-    borderRadius: "50%",
-    background: "radial-gradient(circle, rgba(0,112,243,0.08) 0%, transparent 70%)",
-    pointerEvents: "none",
-    zIndex: 0,
-  },
-
-  bgOrb2: {
-    position: "fixed",
-    bottom: -300,
-    left: -200,
-    width: 700,
-    height: 700,
-    borderRadius: "50%",
-    background: "radial-gradient(circle, rgba(130,80,223,0.06) 0%, transparent 70%)",
-    pointerEvents: "none",
-    zIndex: 0,
   },
 
 
@@ -753,7 +718,7 @@ const styles: Record<string, React.CSSProperties> = {
   /* ── Player ────────────────────────────────────────── */
   playerCard: {
     borderRadius: "var(--radius-lg)",
-    border: "1px solid var(--border-default)",
+    border: "none",
     background: "var(--bg-card)",
     overflow: "hidden",
     animation: "fadeInScale 0.5s ease-out",
@@ -773,7 +738,6 @@ const styles: Record<string, React.CSSProperties> = {
     height: 8,
     borderRadius: "50%",
     background: "var(--success)",
-    animation: "pulse-ring 2s ease-in-out infinite",
   },
 
   nowPlayingText: {
@@ -792,7 +756,7 @@ const styles: Record<string, React.CSSProperties> = {
 
   playerFrame: {
     aspectRatio: "16 / 9",
-    background: "#000",
+    background: "var(--bg-secondary)",
     position: "relative" as const,
   },
 
@@ -869,7 +833,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: "10px 20px",
     borderRadius: "var(--radius-md)",
     border: "none",
-    background: "var(--accent)",
+    background: "#164e63",  /* cyan-900 */
     color: "#fff",
     fontSize: 14,
     fontWeight: 600,
@@ -1046,8 +1010,7 @@ const styles: Record<string, React.CSSProperties> = {
     width: 3,
     height: 8,
     borderRadius: 1.5,
-    background: "var(--accent)",
-    animation: "pulse-ring 1s ease-in-out infinite",
+    background: "var(--text-primary)",
   },
 
   /* Footer */
