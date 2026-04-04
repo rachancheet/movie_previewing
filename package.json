@@ -9,7 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "next": "16.0.8",
+    "next": "16.0.11",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "yt-search": "2.13.1",
