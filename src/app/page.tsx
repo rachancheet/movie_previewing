@@ -44,5 +44,5 @@ export default function RemindersPage() {
     return <Login onLogin={handleLogin} loading={loading} />;
   }
 
-  return <Dashboard onLogout={handleLogout} />;
+  return <Dashboard />;
 }
