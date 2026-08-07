@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { mergeReminders } from '@/lib/store-reminders';
 
-const SYNC_TOKEN = "my_secret_sync_token";
+const SYNC_TOKEN = process.env.SYNC_TOKEN || "my_secret_sync_token";
 
 export async function POST(req: Request) {
   const authHeader = req.headers.get('authorization');

@@ -351,3 +351,45 @@ h1, h2, h3, h4 {
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 10px;
+    gap: 10px;
+  }
+  .header {
+    padding: 15px;
+  }
+  .header h1 {
+    font-size: 1.5rem;
+  }
+  .nav-tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 5px;
+  }
+  .nav-tabs::-webkit-scrollbar {
+    height: 4px;
+  }
+  .kanban-column {
+    min-width: 280px;
+    width: 280px;
+  }
+  .btn {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+  }
+  .fab {
+    bottom: 20px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+  }
+  .toast {
+    bottom: 20px;
+    right: 80px;
+    padding: 8px 15px;
+    font-size: 0.85rem;
+  }
+}

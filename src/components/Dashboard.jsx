@@ -6,7 +6,7 @@ import ListView from './ListView';
 
 const Dashboard = () => {
   const [reminders, setReminders] = useState([]);
-  const [activeTab, setActiveTab] = useState('list');
+  const [activeTab, setActiveTab] = useState('kanban');
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -16,7 +16,7 @@ const Dashboard = () => {
 
   const fetchReminders = async () => {
     try {
-      const res = await fetch('http://localhost:8000/api/reminders');
+      const res = await fetch('/api/reminders');
       const data = await res.json();
       setReminders(data);
     } catch (e) {

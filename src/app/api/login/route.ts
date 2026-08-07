@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const APP_PASSCODE = "1234";
+const APP_PASSCODE = process.env.APP_PASSCODE || "1234";
 
 export async function POST(req: Request) {
   try {

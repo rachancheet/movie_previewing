@@ -17,7 +17,7 @@
       "is_completed": false,
       "due_date": "2026-08-05T14:00:00Z",
       "priority": 2,
-      "list_name": "Personal",
+      "list_name": "Learning",
       "creation_date": "2026-08-02T09:30:00Z"
     },
     {
@@ -37,7 +37,7 @@
       "is_completed": false,
       "due_date": null,
       "priority": 0,
-      "list_name": "Work",
+      "list_name": "Learning",
       "creation_date": "2026-08-02T11:00:00Z"
     },
     {
@@ -59,6 +59,26 @@
       "priority": 1,
       "list_name": "Learning",
       "creation_date": "2026-08-02T17:00:00Z"
+    },
+    {
+      "id": "scriptable_test_1",
+      "due_date": "2026-08-10T12:00:00.000Z",
+      "title": "Buy Apples",
+      "creation_date": "2026-08-07T12:00:00.000Z",
+      "list_name": "Groceries",
+      "is_completed": false,
+      "priority": 1,
+      "notes": "Gala or Fuji"
+    },
+    {
+      "id": "scriptable_test_2",
+      "due_date": "2026-08-15T09:00:00.000Z",
+      "title": "Dentist Appointment",
+      "creation_date": "2026-08-07T12:00:00.000Z",
+      "list_name": "Personal",
+      "is_completed": false,
+      "priority": 2,
+      "notes": null
     }
   ]
 }
