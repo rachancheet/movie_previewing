@@ -1,0 +1,64 @@
+{
+  "reminders": [
+    {
+      "id": "1",
+      "title": "Buy groceries",
+      "notes": "Milk, Eggs, Bread, and Coffee",
+      "is_completed": false,
+      "due_date": "2026-08-03T10:00:00Z",
+      "priority": 1,
+      "list_name": "Work",
+      "creation_date": "2026-08-01T08:00:00Z"
+    },
+    {
+      "id": "2",
+      "title": "Finish project presentation",
+      "notes": "Update the slides for the new Next.js migration",
+      "is_completed": false,
+      "due_date": "2026-08-05T14:00:00Z",
+      "priority": 2,
+      "list_name": "Personal",
+      "creation_date": "2026-08-02T09:30:00Z"
+    },
+    {
+      "id": "3",
+      "title": "Call Mom",
+      "notes": null,
+      "is_completed": true,
+      "due_date": "2026-08-02T12:00:00Z",
+      "priority": 0,
+      "list_name": "Personal",
+      "creation_date": "2026-07-30T15:00:00Z"
+    },
+    {
+      "id": "4",
+      "title": "Schedule dentist appointment",
+      "notes": "Dr. Smith - ask about teeth whitening",
+      "is_completed": false,
+      "due_date": null,
+      "priority": 0,
+      "list_name": "Work",
+      "creation_date": "2026-08-02T11:00:00Z"
+    },
+    {
+      "id": "5",
+      "title": "Pay electricity bill",
+      "notes": "Amount: $85.00",
+      "is_completed": false,
+      "due_date": "2026-08-10T17:00:00Z",
+      "priority": 3,
+      "list_name": "Work",
+      "creation_date": "2026-08-01T10:00:00Z"
+    },
+    {
+      "id": "6",
+      "title": "Read Next.js App Router docs",
+      "notes": "Focus on Server Actions and API Routes",
+      "is_completed": false,
+      "due_date": "2026-08-04T18:00:00Z",
+      "priority": 1,
+      "list_name": "Learning",
+      "creation_date": "2026-08-02T17:00:00Z"
+    }
+  ]
+}
